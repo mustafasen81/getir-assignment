@@ -67,7 +67,7 @@ function getQuery(request) {
 function addErrorMessageToStatus(satus, error) {
     return {
         code: satus.code,
-        msg: satus.code + error ? ("+[" + error + "]") : ""
+        msg: satus.msg + error ? ("+[" + error + "]") : ""
     }
 }
 
