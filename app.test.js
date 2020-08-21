@@ -6,7 +6,7 @@ test("when a valid request received, a valid response must be sent", done => {
     const post = request(app).post("/filter");
     post.send({
         "startDate": "2016-01-26",
-        "endDate": "2018-02-02",
+        "endDate": "2016-02-02",
         "minCount": 2700,
         "maxCount": 3000
     }).set('Accept', 'application/json')
@@ -21,6 +21,25 @@ test("when a valid request received, a valid response must be sent", done => {
             expect(typeof aRecord.createdAt).toBe("string");
             expect(Date.parse(aRecord.createdAt)).not.toBeNaN();
             expect(typeof aRecord.totalCount).toBe("number");
+            done();
+        });
+});
+
+test("every record must be sutisfy the filter", done => {
+    const post = request(app).post("/filter");
+    post.send({
+        "startDate": "2016-01-26",
+        "endDate": "2016-02-02",
+        "minCount": 2700,
+        "maxCount": 3000
+    }).set('Accept', 'application/json')
+        .then(response => {
+            response.body.records.forEach(record => {
+                expect(Date.parse(record.createdAt)).toBeGreaterThanOrEqual(Date.parse("2016-01-26"));
+                expect(Date.parse(record.createdAt)).toBeLessThanOrEqual(Date.parse("2017-02-02"));
+                expect(record.totalCount).toBeGreaterThanOrEqual(2700);
+                expect(record.totalCount).toBeLessThanOrEqual(3000);
+            });
             done();
         });
 });
