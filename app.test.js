@@ -2,11 +2,11 @@ const request = require("supertest");
 const expect = require("expect");
 const app = require("./app");
 
-test("when a valid request received, a valid response must be sent", done => {
+test("when there is records sutisfing the filter, a response having records array must be sent", done => {
     const post = request(app).post("/filter");
     post.send({
         "startDate": "2016-01-26",
-        "endDate": "2016-02-02",
+        "endDate": "2018-02-02",
         "minCount": 2700,
         "maxCount": 3000
     }).set('Accept', 'application/json')
@@ -36,7 +36,7 @@ test("every record must be sutisfy the filter", done => {
         .then(response => {
             response.body.records.forEach(record => {
                 expect(Date.parse(record.createdAt)).toBeGreaterThanOrEqual(Date.parse("2016-01-26"));
-                expect(Date.parse(record.createdAt)).toBeLessThanOrEqual(Date.parse("2017-02-02"));
+                expect(Date.parse(record.createdAt)).toBeLessThanOrEqual(Date.parse("2016-02-02"));
                 expect(record.totalCount).toBeGreaterThanOrEqual(2700);
                 expect(record.totalCount).toBeLessThanOrEqual(3000);
             });

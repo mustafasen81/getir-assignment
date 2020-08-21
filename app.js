@@ -3,6 +3,8 @@ var bodyParser = require('body-parser');
 const MongoClient = require('mongodb').MongoClient;
 
 const dbConnectionString = 'mongodb+srv://challengeUser:WUMglwNBaydH8Yvu@challenge-xzwqd.mongodb.net/getir-case-study?retryWrites=true'
+const dbName = "getir-case-study";
+const collectionName = "records";
 
 const app = express();
 app.use(bodyParser.json());
@@ -76,19 +78,21 @@ function validateRequest(request) {
         if (!request) {
             reject(addErrorMessageToStatus(STATUSES.invalidInput, "Filter request does not exist"));
         }
-        if (typeof request.startDate !== "string") {
+        else if (typeof request.startDate !== "string") {
             reject(addErrorMessageToStatus(STATUSES.invalidInput, "Filter request does not contain a valid startDate field"));
         }
-        if (typeof request.endDate !== "string") {
+        else if (typeof request.endDate !== "string") {
             reject(addErrorMessageToStatus(STATUSES.invalidInput, "Filter request does not contain a valid endDate field"));
         }
-        if (typeof request.minCount !== "number") {
+        else if (typeof request.minCount !== "number") {
             reject(addErrorMessageToStatus(STATUSES.invalidInput, "Filter request does not contain a valid minCount field"));
         }
-        if (typeof request.maxCount !== "number") {
+        else if (typeof request.maxCount !== "number") {
             reject(addErrorMessageToStatus(STATUSES.invalidInput, "Filter request does not contain a valid maxCount field"));
         }
-        resolve();
+        else {
+            resolve();
+        }
     });
 }
 
@@ -100,9 +104,9 @@ function connectToDb() {
 }
 
 function fetchRecords(client, request) {
-    const db = client.db("getir-case-study");
+    const db = client.db(dbName);
     const query = getQuery(request);
-    return db.collection("records").aggregate(query).toArray().
+    return db.collection(collectionName).aggregate(query).toArray().
         catch(err => {
             return Promise.reject(addErrorMessageToStatus(STATUSES.dbQueryFailure, err));
         }).
